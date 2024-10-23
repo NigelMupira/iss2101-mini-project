@@ -9,8 +9,15 @@ public class UserServiceTest {
     @Test
     public void testUserRegistration() {
         User user = new User("Nigel Mupira", "h230828v@hit.ac.zw", "Password123!");
-        boolean isRegistered = userService.registerUser(user);
-        assertTrue(isRegistered);
+        assertTrue(userService.registerUser(user));
+    }
+
+    @Test
+    public void testDuplicateUserRegistration() {
+        User user1 = new User("Nigel Mupira", "h230828v@hit.ac.zw", "Password123!");
+        userService.registerUser(user1);
+        User user2 = new User("Nigel Mupira", "h230828v@hit.ac.zw", "Password123!");
+        assertFalse(userService.registerUser(user2));  // Should fail due to duplicate
     }
 
     @Test
@@ -18,6 +25,13 @@ public class UserServiceTest {
         userService.registerUser(new User("Nigel Mupira", "h230828v@hit.ac.zw", "Password123!"));
         User loggedInUser = userService.login("h230828v@hit.ac.zw", "Password123!");
         assertNotNull(loggedInUser);
-        assertEquals("Nigel Mupira", loggedInUser.getName());
+        assertEquals("Jane Doe", loggedInUser.getName());
+    }
+
+    @Test
+    public void testFailedLogin() {
+        userService.registerUser(new User("Nigel Mupira", "h230828v@hit.ac.zw", "Password123!"));
+        User loggedInUser = userService.login("h230828v@hit.ac.zw", "WrongPassword");
+        assertNull(loggedInUser);  // Should return null on failed login
     }
 }
